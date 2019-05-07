@@ -27,6 +27,7 @@ public class SubscriberImpl implements Subscriber {
         this.my_subscriptions = clientSwing.my_subscriptions;
     }
 
+    @Override
     public void onClose(Subscription_close subs_close) {
         if (subs_close.cause == Subscription_close.Cause.PUBLISHER) {
             messages_TextArea.append("Topic: " + subs_close.topic.name
@@ -42,8 +43,10 @@ public class SubscriberImpl implements Subscriber {
         }
     }
 
+    @Override
     public void onMessage(Message message) {
         messages_TextArea.append(message.topic.name + ": " + message.content + "\n");
     }
 }
+
 

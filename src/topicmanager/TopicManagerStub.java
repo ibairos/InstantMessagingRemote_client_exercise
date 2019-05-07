@@ -8,6 +8,7 @@ import java.util.List;
 import publisher.Publisher;
 import publisher.PublisherStub;
 import subscriber.Subscriber;
+import util.Subscription_close;
 import webSocketService.WebSocketClient;
 
 public class TopicManagerStub implements TopicManager {
@@ -26,36 +27,53 @@ public class TopicManagerStub implements TopicManager {
 
     @Override
     public Publisher addPublisherToTopic(Topic topic) {
+        Publisher publisher = new PublisherStub(topic);
         apiREST_TopicManager.addPublisherToTopic(topic);
-        throw new UnsupportedOperationException("Not supported yet.");
+        return publisher;
     }
 
     @Override
     public void removePublisherFromTopic(Topic topic) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        apiREST_TopicManager.removePublisherFromTopic(topic);
     }
 
     @Override
     public Topic_check isTopic(Topic topic) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return apiREST_TopicManager.isTopic(topic);
     }
 
     @Override
     public List<Topic> topics() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return apiREST_TopicManager.topics();
     }
 
     @Override
     public Subscription_check subscribe(Topic topic, Subscriber subscriber) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Subscription_check sc;
+        if (isTopic(topic).isOpen) {
+            WebSocketClient.addSubscriber(topic, subscriber);
+            sc = new Subscription_check(topic, Subscription_check.Result.OKAY);
+        } else {
+            sc = new Subscription_check(topic, Subscription_check.Result.NO_TOPIC);
+        }
+        return sc;
     }
 
     @Override
     public Subscription_check unsubscribe(Topic topic, Subscriber subscriber) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Subscription_check sc;
+        if (isTopic(topic).isOpen) {
+            WebSocketClient.removeSubscriber(topic);
+            subscriber.onClose(new Subscription_close(topic, Subscription_close.Cause.SUBSCRIBER));
+            sc = new Subscription_check(topic, Subscription_check.Result.OKAY);
+        } else {
+            sc = new Subscription_check(topic, Subscription_check.Result.NO_TOPIC);
+        }
+        return sc;
     }
 
 }
+
 
 
 

@@ -32,7 +32,6 @@ public class apiREST_TopicManager {
             while ((line = in.readLine()) != null) {
                 System.out.println(line);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

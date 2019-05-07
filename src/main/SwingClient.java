@@ -147,7 +147,7 @@ public class SwingClient {
                     break;
                 }
             }
-            if (topic != null) {
+            if (topic != null && !my_subscriptions.containsKey(topic)) {
                 Subscriber s = new SubscriberImpl(SwingClient.this);
                 Subscription_check sc = topicManager.subscribe(topic, s);
                 if (sc.result == Subscription_check.Result.OKAY) {
@@ -251,6 +251,7 @@ public class SwingClient {
         }
     }
 }
+
 
 
 
